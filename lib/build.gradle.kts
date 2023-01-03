@@ -52,7 +52,10 @@ dependencies {
 
 // Partner Dependencies
 dependencies {
-    // TODO add your partner deps here
+    implementation("com.adobe.marketing.mobile:core:1.11.4")
+    implementation("com.adobe.marketing.mobile:analytics:1.2.10")
+    implementation("com.adobe.marketing.mobile:media:2.1.2")
+    implementation("com.adobe.marketing.mobile:identity:1.3.2")
 }
 
 // Test Dependencies
