@@ -11,15 +11,17 @@ import com.segment.analytics.kotlin.core.platform.Plugin
 import com.segment.analytics.kotlin.core.platform.plugins.logger.log
 import kotlinx.serialization.Serializable
 
-class AdobeAnalyticsDestination constructor(private val adobeAppID: String) :
+class AdobeAnalyticsDestination constructor(
+    private val adobeAppID: String,
+    private val adobeAnalyticsClient: DefaultAnalyticsClient = DefaultAnalyticsClient()
+) :
     DestinationPlugin(), AndroidLifecycle {
 
     private val ADOBE_ANALYTICS_FULL_KEY = "Adobe Analytics"
     internal var adobeAnalyticsSettings: AdobeAnalyticsSettings? = null
     private var contextDataConfiguration: ContextDataConfiguration? = null
-    private val adobeAnalyticsClient: DefaultAnalyticsClient = DefaultAnalyticsClient()
-    private lateinit var ecommerceAnalytics: EcommerceAnalytics
-    private lateinit var videoAnalytics: VideoAnalytics
+    internal lateinit var ecommerceAnalytics: EcommerceAnalytics
+    internal lateinit var videoAnalytics: VideoAnalytics
 
     override val key: String = ADOBE_ANALYTICS_FULL_KEY
 
@@ -171,8 +173,6 @@ data class AdobeAnalyticsSettings(
     var ssl: Boolean = false,
 //    Adobe Product Identifier
     var productIdentifier: String,
-//    Adobe Heartbeat Tracking Server URL
-    var heartbeatTrackingServerUrl: String,
 //    Adobe eventsV2 Map which are mapped with Adobe Events in Segment.
     var eventsV2: Map<String, String>,
 //    Adobe Context Values in form of Map

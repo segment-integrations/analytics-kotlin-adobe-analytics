@@ -3,19 +3,38 @@
 Add Adobe-Analytics support to your applications via this plugin for [Analytics-Kotlin](https://github.com/segmentio/analytics-kotlin)
 
 ## Adding the dependency
+To install the Segment-Adobe-Analytics integration, simply add this line to your gradle file:
 
-To install the Segment-Adobe Analytics integration, simply add this line to your gradle file:
 ```
 implementation 'com.segment.analytics.kotlin.destinations:adobe-analytics:<latest_version>'
 ```
+
 Or the following for Kotlin DSL
+
 ```
 implementation("com.segment.analytics.kotlin.destinations:adobe-analytics:<latest_version>")
 ```
 
-## Usage
 
-// TODO
+## Using the Plugin in your App
+
+Open the file where you setup and configure the Analytics-Kotlin library.  Add this plugin to the list of imports.
+
+```
+import com.segment.analytics.kotlin.destinations.adobeanalytics.AdobeAnalyticsDestination
+```
+
+Just under your Analytics-Kotlin library setup, call `analytics.add(plugin = ...)` to add an instance of the plugin to the Analytics timeline.
+
+```
+    analytics = Analytics("<YOUR WRITE KEY>", applicationContext) {
+        this.flushAt = 3
+        this.trackApplicationLifecycleEvents = true
+    }
+    analytics.add(plugin = AdobeAnalyticsDestination(adobeAppID = "<WRITE YOUR ENVIRONMENT-FILE-ID>"))
+```
+
+Your events will now begin to flow to Adobe-Analytics in device mode.
 
 
 ## Integrating with Segment

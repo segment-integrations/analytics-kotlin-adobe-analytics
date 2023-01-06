@@ -16,7 +16,7 @@ import kotlinx.serialization.json.JsonObject
 /**
  * Generate events for all video actions.
  */
-internal class VideoAnalytics(
+class VideoAnalytics internal constructor(
     context: Context,
     contextDataConfiguration: ContextDataConfiguration,
     private val mediaTrackerFactory: MediaTrackerFactory,
@@ -110,7 +110,7 @@ internal class VideoAnalytics(
     private var packageName: String
     private var mediaTracker: MediaTracker? = null
 
-    constructor(
+    internal constructor(
         context: Context,
         contextDataConfiguration: ContextDataConfiguration,
         analytics: Analytics,
@@ -129,13 +129,6 @@ internal class VideoAnalytics(
 
     fun track(payload: TrackEvent) {
         val event = EventVideoEnum[payload.event]
-       /* if (heartbeatTrackingServerUrl == null) {
-            analytics.log(
-                "Please enter a Heartbeat Tracking Server URL in your Segment UI "
-                        + "Settings in order to send video events to Adobe Analytics"
-            )
-            return
-        }*/
         check(!(event != EventVideoEnum.PlaybackStarted && !isSessionStarted)) { "Video session has not started yet." }
         when (event) {
             EventVideoEnum.PlaybackStarted -> trackVideoPlaybackStarted(payload)
