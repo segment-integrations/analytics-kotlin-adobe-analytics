@@ -24,8 +24,7 @@ class VideoAnalytics internal constructor(
 ) {
     internal enum class EventVideoEnum(
         /**
-         * Retrieves the Adobe Analytics video event name. This is different from `enum.name()
-        ` * .
+         * Retrieves the Adobe Analytics video event name. This is different from `enum.name()`
          *
          * @return Event name.
          */
@@ -104,9 +103,7 @@ class VideoAnalytics internal constructor(
     }
 
     var contextDataConfiguration: ContextDataConfiguration
-    private var debug: Boolean
     var isSessionStarted: Boolean
-        private set
     private var packageName: String
     private var mediaTracker: MediaTracker? = null
 
@@ -119,7 +116,6 @@ class VideoAnalytics internal constructor(
     init {
         this.contextDataConfiguration = contextDataConfiguration
         isSessionStarted = false
-        debug = false
         packageName = context.packageName
         if (packageName == null) {
             // default app version to "unknown" if not otherwise present b/c Adobe requires this value
@@ -138,7 +134,7 @@ class VideoAnalytics internal constructor(
             EventVideoEnum.ContentStarted -> trackVideoContentStarted(payload)
             EventVideoEnum.ContentCompleted -> trackVideoContentCompleted()
             EventVideoEnum.PlaybackBufferStarted -> trackVideoPlaybackBufferStarted()
-            EventVideoEnum.PlaybackBufferCompleted -> trackVideoPlaybackBufferCompleted()
+            EventVideoEnum.PlaybackBufferCompleted -> trackVideoPlaybackBufferCompleted(payload)
             EventVideoEnum.PlaybackSeekStarted -> trackVideoPlaybackSeekStarted()
             EventVideoEnum.PlaybackSeekCompleted -> trackVideoPlaybackSeekCompleted(payload)
             EventVideoEnum.AdBreakStarted -> trackVideoAdBreakStarted(payload)
@@ -181,6 +177,11 @@ class VideoAnalytics internal constructor(
 
     private fun trackVideoContentStarted(track: TrackEvent) {
         val event = VideoEvent(track)
+        val properties: Map<String, String> = track.properties.asStringMap()
+        val position = properties["position"]?.toDouble() ?:0.0
+        if (position > 0.0) {
+            mediaTracker?.updateCurrentPlayhead(position)
+        }
         mediaTracker?.trackPlay()
         analytics.log("mediaTracker.trackPlay()")
         trackAdobeEvent(
@@ -201,10 +202,21 @@ class VideoAnalytics internal constructor(
     }
 
     private fun trackVideoPlaybackBufferStarted() {
+        mediaTracker?.trackPause()
         trackAdobeEvent(Media.Event.BufferStart, mapOf(), null)
     }
 
-    private fun trackVideoPlaybackBufferCompleted() {
+    private fun trackVideoPlaybackBufferCompleted(track: TrackEvent) {
+        val seekProperties: Map<String, String> = track.properties.asStringMap()
+        var seekPosition: Long = seekProperties["seekPosition"]?.toLong() ?: 0
+        if (seekPosition == 0L) {
+            seekPosition = seekProperties["seek_position"]?.toLong() ?: 0
+        }
+        if (seekPosition == 0L) {
+            seekPosition = seekProperties["position"]?.toLong() ?: 0
+        }
+        mediaTracker?.trackPlay()
+        mediaTracker?.updateCurrentPlayhead(seekPosition.toDouble())
         trackAdobeEvent(Media.Event.BufferComplete, mapOf(), null)
     }
 
@@ -216,6 +228,7 @@ class VideoAnalytics internal constructor(
     }
 
     private fun trackVideoPlaybackSeekStarted() {
+        mediaTracker?.trackPause()
         trackAdobeEvent(Media.Event.SeekStart, mapOf(), null)
     }
 
@@ -225,6 +238,11 @@ class VideoAnalytics internal constructor(
         if (seekPosition == 0L) {
             seekPosition = seekProperties["seek_position"]?.toLong() ?: 0
         }
+        if (seekPosition == 0L) {
+            seekPosition = seekProperties["position"]?.toLong() ?: 0
+        }
+        mediaTracker?.trackPlay()
+        mediaTracker?.updateCurrentPlayhead(seekPosition.toDouble())
         trackAdobeEvent(Media.Event.SeekComplete, mapOf(), null)
     }
 
@@ -260,10 +278,6 @@ class VideoAnalytics internal constructor(
     private fun trackVideoQualityUpdated(track: TrackEvent) {
         val event = VideoEvent(track, true)
         mediaTracker?.updateQoEObject(event.qoeObject)
-    }
-
-    fun setDebugLogging(debug: Boolean) {
-        this.debug = debug
     }
 
     /**

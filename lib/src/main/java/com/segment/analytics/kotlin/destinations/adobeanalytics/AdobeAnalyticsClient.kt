@@ -14,7 +14,7 @@ internal interface AdobeAnalyticsClient {
         debugLogging: Boolean = false
     )
 
-    fun setVisitorIdentifier(identifier: String)
+    fun setVisitorIdentifier(identifier: String?)
 
     fun lifecycleStart(contextData: Map<String, String>?)
 
@@ -51,7 +51,7 @@ class DefaultAnalyticsClient(): AdobeAnalyticsClient{
         }
     }
 
-    override fun setVisitorIdentifier(identifier: String) {
+    override fun setVisitorIdentifier(identifier: String?) {
         Analytics.setVisitorIdentifier(identifier)
     }
 

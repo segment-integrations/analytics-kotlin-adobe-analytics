@@ -108,6 +108,12 @@ class AdobeAnalyticsDestination constructor(
         return payload
     }
 
+    override fun reset() {
+        super.reset()
+        adobeAnalyticsClient.setVisitorIdentifier(null)
+        analytics.log("Analytics.setVisitorIdentifier(null)")
+    }
+
     /**
      * AndroidActivity Lifecycle Methods
      */
