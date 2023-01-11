@@ -114,6 +114,12 @@ class AdobeAnalyticsDestination constructor(
         analytics.log("Analytics.setVisitorIdentifier(null)")
     }
 
+    override fun flush() {
+        super.flush()
+        adobeAnalyticsClient.flushQueue()
+        analytics.log("Analytics.sendQueuedHits()")
+    }
+
     /**
      * AndroidActivity Lifecycle Methods
      */
