@@ -23,6 +23,8 @@ internal interface AdobeAnalyticsClient {
     fun trackAction(action: String, contextData: Map<String, String>?)
 
     fun trackState(state: String, contextData: Map<String, String>?)
+
+    fun flushQueue()
 }
 
 
@@ -68,5 +70,9 @@ class DefaultAnalyticsClient(): AdobeAnalyticsClient{
 
     override fun trackState(state: String, contextData: Map<String, String>?) {
         MobileCore.trackState(state, contextData)
+    }
+
+    override fun flushQueue() {
+        Analytics.sendQueuedHits()
     }
 }

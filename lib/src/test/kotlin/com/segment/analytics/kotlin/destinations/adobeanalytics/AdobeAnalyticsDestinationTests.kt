@@ -114,6 +114,12 @@ class AdobeAnalyticsDestinationTests {
     }
 
     @Test
+    fun `flush is handled correctly`() {
+        mockedAdobeAnalyticsDestination.flush()
+        verify { mockedDefaultAdobeAnalyticsClient.flushQueue() }
+    }
+
+    @Test
     fun `identify is handled correctly with userId`() {
         val sampleIdentifyEvent = IdentifyEvent(
             userId = "adobe-UserID-123",
