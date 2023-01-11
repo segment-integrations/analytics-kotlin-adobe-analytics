@@ -54,7 +54,7 @@ class VideoAnalytics internal constructor(
             init {
                 names = HashMap()
                 for (e in values()) {
-                    (names as HashMap<String, EventVideoEnum>)[e.name] = e
+                    (names as HashMap<String, EventVideoEnum>)[e.eventName] = e
                 }
             }
 
