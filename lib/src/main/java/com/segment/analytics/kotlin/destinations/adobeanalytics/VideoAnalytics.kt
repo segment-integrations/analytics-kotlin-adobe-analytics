@@ -79,7 +79,7 @@ class VideoAnalytics internal constructor(
     /**
      * Creates MediaHeartbeats with the provided delegate.
      */
-    internal class MediaTrackerFactory {
+    class MediaTrackerFactory {
         fun get(config: Map<String, Any>): MediaTracker {
             return Media.createTracker(config)
         }
@@ -324,7 +324,7 @@ class VideoAnalytics internal constructor(
             }
             if (propertiesMap.containsKey("livestream")) {
                 var format: String = MediaConstants.StreamType.LIVE
-                if (!propertiesMap["livestream"].equals("false")) {
+                if (propertiesMap["livestream"]?.toBoolean() != true) {
                     format = MediaConstants.StreamType.VOD
                 }
                 metadata[STREAM_FORMAT] = format
@@ -377,7 +377,7 @@ class VideoAnalytics internal constructor(
                 for (field in contextDataConfiguration.eventFieldNames) {
                     var value: Any? = null
                     try {
-                        value = contextDataConfiguration.searchValue(field, payload.properties)
+                        value = contextDataConfiguration.searchValue(field, payload)
                     } catch (e: IllegalArgumentException) {
                         // Ignore.
                     }
@@ -440,7 +440,7 @@ class VideoAnalytics internal constructor(
                     totalLength = eventPropertiesMap["total_length"]?.toDouble() ?: 0.0
                 }
                 var format: String = MediaConstants.StreamType.LIVE
-                if (!eventPropertiesMap["livestream"].equals("false")) {
+                if (eventPropertiesMap["livestream"]?.toBoolean() != true) {
                     format = MediaConstants.StreamType.VOD
                 }
                 val mediaObjectMap = Media.createMediaObject(title, contentAssetId, totalLength, format, Media.MediaType.Video)

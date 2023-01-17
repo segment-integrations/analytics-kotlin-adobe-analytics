@@ -1,6 +1,9 @@
 package com.segment.analytics.kotlin.destinations.adobeanalytics
 
-import com.segment.analytics.kotlin.core.Properties
+import com.segment.analytics.kotlin.core.BaseEvent
+import com.segment.analytics.kotlin.core.ScreenEvent
+import com.segment.analytics.kotlin.core.TrackEvent
+import com.segment.analytics.kotlin.core.utilities.toContent
 
 /**
  * Encapsulates Context Data settings:
@@ -74,30 +77,72 @@ class ContextDataConfiguration(
      *
      *
      * @param field Field name.
-     * @param payloadProperties Event payload.
+     * @param event BaseEvent payload.
      * @return The value if found, `null` otherwise.
      */
-    fun searchValue(field: String?, payloadProperties: Properties): Any? {
+    fun searchValue(field: String?, event: BaseEvent): Any? {
         require(!(field == null || field.trim { it <= ' ' }
             .isEmpty())) { "The field name must be defined" }
-        var searchPaths = field.split("\\.").toTypedArray()
+        var searchPaths = field.split(".").toTypedArray()
 
         // Using the properties object as starting point by default.
-        val values = payloadProperties.asStringMap()
+        val values = when (event) {
+            is ScreenEvent -> {
+                event.properties.toContent() as MutableMap<String, Any>
+            }
+            is TrackEvent -> {
+                event.properties.toContent() as MutableMap<String, Any>
+            }
+            else -> {
+                mutableMapOf<String, Any>()
+            }
+        }
 
         // Dot is present at the beginning of the field name
         if (searchPaths[0] == "") {
+            // Using the root of the payload as starting point
+            values["context"] = getContextMap(event)
+            values["integrations"] = getIntegrationMap(event)
+            values["userId"] = event.userId
+            when (event) {
+                is ScreenEvent -> {
+                    values["event"] = event.name
+                }
+                is TrackEvent -> {
+                    values["anonymousId"] = event.anonymousId
+                    values["event"] = event.event
+                }
+                else -> {}
+            }
             // Using the root of the payload as starting point
             searchPaths = searchPaths.copyOfRange(1, searchPaths.size)
         }
         return searchValue(searchPaths, values)
     }
 
-    private fun searchValue(searchPath: Array<String>, values: Map<String, String>): Any? {
-        var currentValues: Map<String, String> = values
+    private fun getContextMap(event: BaseEvent): MutableMap<String, Any> {
+        return try {
+            event.context.toContent() as MutableMap<String, Any>
+        } catch (e:Exception) {
+            mutableMapOf<String, Any>()
+        }
+    }
+    private fun getIntegrationMap(event: BaseEvent): MutableMap<String, Any> {
+        return try {
+            event.integrations.toContent() as MutableMap<String, Any>
+        } catch (e:Exception) {
+            mutableMapOf<String, Any>()
+        }
+    }
+
+
+    private fun searchValue(searchPath: Array<String>, values: Map<String, Any>): Any? {
+        var currentValues: Map<String, Any> = values
         for (i in searchPath.indices) {
             val path = searchPath[i]
-            require(path.trim { it <= ' ' }.isNotEmpty()) { "Invalid field name" }
+            require(path.trim { it <= ' ' }.isNotEmpty()) {
+                throw IllegalArgumentException("Invalid field name")
+            }
             if (!currentValues.containsKey(path)) {
                 return null
             }
@@ -106,10 +151,10 @@ class ContextDataConfiguration(
                 return value
             }
             if (value is Map<*, *>) {
-                currentValues = value.toMap() as Map<String, String>
+                currentValues = value as Map<String, String>
             } else if (value is Map<*, *>) {
                 try {
-                    currentValues = value.toMap() as Map<String, String>
+                    currentValues = value as Map<String, String>
                 } catch (e: ClassCastException) {
                     return null
                 }

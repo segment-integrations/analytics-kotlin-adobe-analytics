@@ -67,7 +67,7 @@ class AdobeAnalyticsDestination constructor(
             return payload
         }
 
-        val contextDataMap: Map<String, String> = getContextData(payload.properties)
+        val contextDataMap: Map<String, String> = getContextData(payload, payload.properties)
         adobeAnalyticsClient.trackState(payload.name, contextDataMap)
         analytics.log("MobileCore.trackState(${payload.name}, $contextDataMap)")
         return payload
@@ -101,7 +101,7 @@ class AdobeAnalyticsDestination constructor(
             return payload
         }
         val event: String = adobeAnalyticsSettings?.eventsV2!![payload.event].toString()
-        val contextDataMap: Map<String, String> = getContextData(payload.properties)
+        val contextDataMap: Map<String, String> = getContextData(payload, payload.properties)
 
         adobeAnalyticsClient.trackAction(event, contextDataMap)
         analytics.log("MobileCore.trackAction(${payload.event}, $contextDataMap)")
@@ -134,7 +134,7 @@ class AdobeAnalyticsDestination constructor(
         adobeAnalyticsClient.lifecyclePause()
     }
 
-    private fun getContextData(properties: Properties): Map<String, String> {
+    private fun getContextData(event: BaseEvent, properties: Properties): Map<String, String> {
         val extraProperties = properties.asStringMap() as MutableMap
 
         // Remove products just in case
@@ -144,7 +144,7 @@ class AdobeAnalyticsDestination constructor(
         for (field in contextDataConfiguration?.eventFieldNames!!) {
             var value: Any? = null
             try {
-                value = contextDataConfiguration!!.searchValue(field, properties)
+                value = contextDataConfiguration!!.searchValue(field, event)
             } catch (e: IllegalArgumentException) {
                 if (debugLogsEnabled) {
                     e.printStackTrace()

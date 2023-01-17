@@ -184,7 +184,9 @@ class AdobeAnalyticsDestinationTests {
             event = "TestEvent",
             properties = buildJsonObject {
             }
-        )
+        ).apply {
+            anonymousId = "anonymous_UserID-123"
+        }
         mockedAdobeAnalyticsDestination.track(sampleEvent)
         verify {  mockedDefaultAdobeAnalyticsClient.trackAction("event1",  mapOf<String, String>())}
     }
@@ -237,7 +239,10 @@ class AdobeAnalyticsDestinationTests {
                 put("testing", "testing value")
                 put("extra", "extra value")
             },
-        )
+        ).apply {
+            userId = "user_UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
         mockedAdobeAnalyticsDestination.track(sampleEvent)
         val contextData: MutableMap<String, String> = mutableMapOf()
         contextData["myapp.testing.Testing"] = "testing value"
