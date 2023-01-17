@@ -180,23 +180,19 @@ class EcommerceAnalytics internal constructor(
             // Default to 1.
             quantity = 1
             val q: String = (eventProductMap["quantity"] ?: "").toString()
-            if (q != null) {
-                try {
-                    quantity = q.toInt()
-                } catch (e: NumberFormatException) {
-                    // Default.
-                }
+            try {
+                quantity = q.toInt()
+            } catch (e: NumberFormatException) {
+                // Default.
             }
 
             // Default to 0.
             price = 0.0
             val p: String = (eventProductMap["price"] ?: "").toString()
-            if (p != null) {
-                try {
-                    price = p.toDouble()
-                } catch (e: NumberFormatException) {
-                    // Default.
-                }
+            try {
+                price = p.toDouble()
+            } catch (e: NumberFormatException) {
+                // Default.
             }
             price *= quantity
         }

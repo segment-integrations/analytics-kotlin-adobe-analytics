@@ -94,7 +94,7 @@ class ContextDataConfiguration(
                 event.properties.toContent() as MutableMap<String, Any>
             }
             else -> {
-                mutableMapOf<String, Any>()
+                mutableMapOf()
             }
         }
 
@@ -124,14 +124,14 @@ class ContextDataConfiguration(
         return try {
             event.context.toContent() as MutableMap<String, Any>
         } catch (e:Exception) {
-            mutableMapOf<String, Any>()
+            mutableMapOf()
         }
     }
     private fun getIntegrationMap(event: BaseEvent): MutableMap<String, Any> {
         return try {
             event.integrations.toContent() as MutableMap<String, Any>
         } catch (e:Exception) {
-            mutableMapOf<String, Any>()
+            mutableMapOf()
         }
     }
 
@@ -146,7 +146,7 @@ class ContextDataConfiguration(
             if (!currentValues.containsKey(path)) {
                 return null
             }
-            val value: Any = currentValues.get(path) ?: return null
+            val value: Any = currentValues[path] ?: return null
             if (i == searchPath.size - 1) {
                 return value
             }

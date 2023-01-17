@@ -25,7 +25,7 @@ class EcommerceAnalyticsTests {
     @MockK(relaxUnitFun = true)
     lateinit var mockedDefaultAdobeAnalyticsClient: DefaultAnalyticsClient
 
-    lateinit var mockedEcommerceAnalytics: EcommerceAnalytics
+    private lateinit var mockedEcommerceAnalytics: EcommerceAnalytics
 
     init {
         MockKAnnotations.init(this)

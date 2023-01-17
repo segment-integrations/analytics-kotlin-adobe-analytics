@@ -35,7 +35,7 @@ class VideoAnalyticsTests {
     @MockK
     lateinit var mockedContext: Context
 
-    lateinit var mockedVideoAnalytics: VideoAnalytics
+    private lateinit var mockedVideoAnalytics: VideoAnalytics
 
     init {
         MockKAnnotations.init(this)
@@ -441,7 +441,6 @@ class VideoAnalyticsTests {
         verify {  mockedMediaTracker.trackEvent(Media.Event.AdBreakComplete, mapOf(), null)}
     }
 
-
     @Test
     fun `track for Video Ad Break Started handled correctly`() {
         val variables: MutableMap<String, String> = java.util.HashMap()
@@ -508,6 +507,91 @@ class VideoAnalyticsTests {
         mediaMap[ADVERTISER] = "Publisher 1"
         verify {  mockedMediaTracker.trackEvent(Media.Event.AdStart,
             mediaMap as Map<String, Any>?, contextData)}
+    }
+
+    @Test
+    fun `track for Video Ad Break Skipped handled correctly`() {
+        startVideoSession()
+        val sampleEvent = TrackEvent(
+            event = VideoAnalytics.EventVideoEnum.AdSkipped.eventName,
+            properties = buildJsonObject {
+            }
+        ).apply {
+            userId = "UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
+        mockedVideoAnalytics.track(sampleEvent)
+        verify {  mockedMediaTracker.trackEvent(Media.Event.AdSkip, mapOf(), null)}
+    }
+
+    @Test
+    fun `track for Video Ad Break Completed handled correctly`() {
+        startVideoSession()
+        val sampleEvent = TrackEvent(
+            event = VideoAnalytics.EventVideoEnum.AdCompleted.eventName,
+            properties = buildJsonObject {
+            }
+        ).apply {
+            userId = "UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
+        mockedVideoAnalytics.track(sampleEvent)
+        verify {  mockedMediaTracker.trackEvent(Media.Event.AdComplete, mapOf(), null)}
+    }
+
+    @Test
+    fun `track for Video playback interrupted handled correctly`() {
+        startVideoSession()
+        val sampleEvent = TrackEvent(
+            event = VideoAnalytics.EventVideoEnum.PlaybackInterrupted.eventName,
+            properties = buildJsonObject {
+            }
+        ).apply {
+            userId = "UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
+        mockedVideoAnalytics.track(sampleEvent)
+        verify {  mockedMediaTracker.trackPause()}
+    }
+
+    @Test
+    fun `track for Video Quality updated handled correctly`() {
+        startVideoSession()
+        val sampleEvent = TrackEvent(
+            event = VideoAnalytics.EventVideoEnum.QualityUpdated.eventName,
+            properties = buildJsonObject {
+                put("bitrate", 15000)
+                put("startupTime", 1)
+                put("fps", 60)
+                put("droppedFrames", 2)
+            }
+        ).apply {
+            userId = "UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
+        mockedVideoAnalytics.track(sampleEvent)
+        val mockedMediaQoeObject = Media.createQoEObject(15000, 1.0, 60.0, 2L)
+        verify {  mockedMediaTracker.updateQoEObject(mockedMediaQoeObject)}
+    }
+
+    @Test
+    fun `track for Video Quality updated with snake_case handled correctly`() {
+        startVideoSession()
+        val sampleEvent = TrackEvent(
+            event = VideoAnalytics.EventVideoEnum.QualityUpdated.eventName,
+            properties = buildJsonObject {
+                put("bitrate", 15000)
+                put("startup_time", 1)
+                put("fps", 60)
+                put("dropped_frames", 2)
+            }
+        ).apply {
+            userId = "UserID-123"
+            anonymousId = "anonymous_UserID-123"
+        }
+        mockedVideoAnalytics.track(sampleEvent)
+        val mockedMediaQoeObject = Media.createQoEObject(15000, 1.0, 60.0, 2L)
+        verify {  mockedMediaTracker.updateQoEObject(mockedMediaQoeObject)}
     }
 
     private fun startVideoSession() {
