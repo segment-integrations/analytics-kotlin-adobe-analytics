@@ -3,8 +3,7 @@ package com.segment.analytics.kotlin.destinations.adobeanalytics
 import com.segment.analytics.kotlin.core.Analytics
 import com.segment.analytics.kotlin.core.TrackEvent
 import com.segment.analytics.kotlin.core.platform.plugins.logger.log
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
+import com.segment.analytics.kotlin.core.utilities.toContent
 import java.util.*
 
 /**
@@ -95,11 +94,11 @@ class EcommerceAnalytics internal constructor(
         contextData["&&events"] = eventName
         val extraProperties = payload.properties.asStringMap() as MutableMap
         val properties = payload.properties.asStringMap() as MutableMap
-        val productsJsonArray = (payload.properties.toMap()["products"] as JsonArray)
+        val productsMap = (payload.properties.toContent()["products"] ?: ArrayList<Map<String, Any>>()) as ArrayList<Map<String, Any>>
 
         val products: Products
-        if (properties.containsKey("products") && productsJsonArray.size > 0) {
-            products = Products(productsJsonArray)
+        if (properties.containsKey("products") && productsMap.isNotEmpty()) {
+            products = Products(productsMap)
             extraProperties.remove("products")
         } else {
             val propertiesToRemove: MutableList<String> = LinkedList()
@@ -134,7 +133,7 @@ class EcommerceAnalytics internal constructor(
         for (field in contextDataConfiguration.eventFieldNames) {
             var value: Any? = null
             try {
-                value = contextDataConfiguration.searchValue(field, payload.properties)
+                value = contextDataConfiguration.searchValue(field, payload)
             } catch (e: IllegalArgumentException) {
                 // Ignore.
             }
@@ -165,19 +164,22 @@ class EcommerceAnalytics internal constructor(
      *
      * @param eventProductMap Product as defined in the event.
      */
-    internal inner class Product(eventProductMap: Map<String, String>) {
+    internal inner class Product(eventProductMap: Map<String, Any>) {
         private val category: String?
+        private val name: String?
         private var id: String? = null
         private var quantity: Int
         private var price: Double
 
         init {
             setProductId(eventProductMap)
-            this.category = eventProductMap["category"]
+            this.category = (eventProductMap["category"] ?: "").toString()
+
+            this.name = (eventProductMap["name"] ?: "").toString()
 
             // Default to 1.
             quantity = 1
-            val q: String? = eventProductMap["quantity"]
+            val q: String = (eventProductMap["quantity"] ?: "").toString()
             if (q != null) {
                 try {
                     quantity = q.toInt()
@@ -188,7 +190,7 @@ class EcommerceAnalytics internal constructor(
 
             // Default to 0.
             price = 0.0
-            val p: String? = eventProductMap["price"]
+            val p: String = (eventProductMap["price"] ?: "").toString()
             if (p != null) {
                 try {
                     price = p.toDouble()
@@ -217,27 +219,27 @@ class EcommerceAnalytics internal constructor(
          * @param eventProductMap Event's product.
          * @throws IllegalArgumentException if the product does not have an ID.
          */
-        private fun setProductId(eventProductMap: Map<String, String>) {
+        private fun setProductId(eventProductMap: Map<String, Any>) {
             if (productIdentifier != null) {
                 // When productIdentifier is "id" use the default behavior.
                 if (productIdentifier != "id") {
-                    id = eventProductMap.get(productIdentifier)
+                    id = (eventProductMap[productIdentifier] ?: "").toString()
                 }
             }
 
             // Fallback to "productId" as V2 ecommerce spec
             if (id == null || id!!.trim { it <= ' ' }.isEmpty()) {
-                id = eventProductMap["productId"]
+                id = (eventProductMap["productId"] ?: "").toString()
             }
 
             // Fallback to "product_id" as V2 ecommerce spec
             if (id == null || id!!.trim { it <= ' ' }.isEmpty()) {
-                id = eventProductMap["product_id"]
+                id = (eventProductMap["product_id"] ?: "").toString()
             }
 
             // Fallback to "id" as V1 ecommerce spec
             if (id == null || id!!.trim { it <= ' ' }.isEmpty()) {
-                id = eventProductMap["id"]
+                id = (eventProductMap["id"]?: "").toString()
             }
             require(!(id == null || id!!.trim { it <= ' ' }
                 .isEmpty())) { "Product id is not defined." }
@@ -258,6 +260,12 @@ class EcommerceAnalytics internal constructor(
                 builder.append(category)
             }
             builder.append(";")
+
+           /* // Name
+            if (name != null && name.trim { it <= ' ' }.isNotEmpty()) {
+                builder.append(name)
+            }
+            builder.append(";")*/
 
             // Id
             if (id != null && id!!.trim { it <= ' ' }.isNotEmpty()) {
@@ -281,11 +289,11 @@ class EcommerceAnalytics internal constructor(
     internal inner class Products {
         private var products: ArrayList<Product> = arrayListOf()
 
-        constructor(eventProductsJsonArray: JsonArray) {
+        constructor(eventProductsJsonArray: ArrayList<Map<String, Any>>) {
             products = ArrayList(eventProductsJsonArray.size)
-            for (eventProductJsonObject in eventProductsJsonArray) {
+            for (product in eventProductsJsonArray) {
                 try {
-                    products.add(Product((eventProductJsonObject as JsonObject).asStringMap()))
+                    products.add(Product(product))
                 } catch (e: IllegalArgumentException) {
                     // We ignore the product
                     analytics.log(
