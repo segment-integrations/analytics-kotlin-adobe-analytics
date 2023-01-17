@@ -103,7 +103,7 @@ class VideoAnalytics internal constructor(
     }
 
     var contextDataConfiguration: ContextDataConfiguration
-    var isSessionStarted: Boolean
+    private var isSessionStarted: Boolean
     private var packageName: String
     private var mediaTracker: MediaTracker? = null
 
@@ -172,7 +172,7 @@ class VideoAnalytics internal constructor(
 
     private fun trackVideoPlaybackResumed() {
         mediaTracker?.trackPlay()
-        analytics.log("mediaTrackermediaTracker.trackPlay()")
+        analytics.log("mediaTracker.trackPlay()")
     }
 
     private fun trackVideoContentStarted(track: TrackEvent) {
@@ -374,17 +374,17 @@ class VideoAnalytics internal constructor(
                     extraProperties.remove(key)
                 }
                 val cdata: MutableMap<String?, String> = HashMap()
-                for (field in contextDataConfiguration.eventFieldNames) {
+                for (eventField in contextDataConfiguration.eventFieldNames) {
                     var value: Any? = null
                     try {
-                        value = contextDataConfiguration.searchValue(field, payload)
+                        value = contextDataConfiguration.searchValue(eventField, payload)
                     } catch (e: IllegalArgumentException) {
                         // Ignore.
                     }
                     if (value != null) {
-                        val variable = contextDataConfiguration.getVariableName(field)
+                        val variable = contextDataConfiguration.getVariableName(eventField)
                         cdata[variable] = value.toString()
-                        extraProperties.remove(field)
+                        extraProperties.remove(eventField)
                     }
                 }
 
@@ -486,7 +486,7 @@ class VideoAnalytics internal constructor(
                 val eventPropertiesMap: Map<String, String> = payload.properties.asStringMap()
                 val title: String = eventPropertiesMap["title"].toString()
                 var indexPosition: Long =
-                    eventPropertiesMap.get("indexPosition")?.toLong() ?:1 // Segment does not spec this
+                    eventPropertiesMap["indexPosition"]?.toLong() ?:1 // Segment does not spec this
                 if (indexPosition == 1L) {
                     indexPosition = eventPropertiesMap["index_position"]?.toLong() ?: 1
                 }
@@ -518,17 +518,6 @@ class VideoAnalytics internal constructor(
 
                 return Media.createQoEObject(bitrate, startupTime, fps, droppedFrames)
             }
-
-        fun getMetadata(): Map<String?, String> {
-            return metadata
-        }
-
-        fun getProperties(): Map<String, String> {
-            return propertiesMap
-        }
-
-        val eventPayload: TrackEvent
-            get() = payload
     }
 
     companion object {

@@ -169,7 +169,7 @@ class AdobeAnalyticsDestination constructor(
             }
         }
         return if (contextData.isEmpty()) {
-            mapOf<String, String>()
+            mapOf()
         } else {
             contextData.toMap()
         }

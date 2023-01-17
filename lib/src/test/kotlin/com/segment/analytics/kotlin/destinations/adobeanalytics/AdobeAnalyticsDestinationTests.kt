@@ -42,7 +42,7 @@ class AdobeAnalyticsDestinationTests {
     @MockK(relaxUnitFun = true)
     lateinit var mockedEcommerceAnalytics: EcommerceAnalytics
 
-    lateinit var mockedAdobeAnalyticsDestination: AdobeAnalyticsDestination
+    private lateinit var mockedAdobeAnalyticsDestination: AdobeAnalyticsDestination
     private val sampleAdobeAnalyticsSettings: Settings = LenientJson.decodeFromString(
         """
             {
@@ -188,7 +188,7 @@ class AdobeAnalyticsDestinationTests {
             anonymousId = "anonymous_UserID-123"
         }
         mockedAdobeAnalyticsDestination.track(sampleEvent)
-        verify {  mockedDefaultAdobeAnalyticsClient.trackAction("event1",  mapOf<String, String>())}
+        verify {  mockedDefaultAdobeAnalyticsClient.trackAction("event1",  mapOf())}
     }
 
     @Test

@@ -31,7 +31,7 @@ internal interface AdobeAnalyticsClient {
 /**
  * Default implementation of Adobe Analytics client.
  */
-class DefaultAnalyticsClient(): AdobeAnalyticsClient{
+class DefaultAnalyticsClient : AdobeAnalyticsClient{
     override fun initAdobeMobileCore(
         adobeAppId: String,
         application: Application?,
