@@ -3,6 +3,7 @@ package com.segment.analytics.kotlin.destinations.adobeanalytics
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import com.segment.analytics.kotlin.core.*
 import com.segment.analytics.kotlin.core.platform.Plugin
 import com.segment.analytics.kotlin.core.utilities.LenientJson
@@ -93,6 +94,15 @@ class AdobeAnalyticsDestinationTests {
             assertEquals(mockedAdobeAnalyticsDestination.adobeAnalyticsSettings!!.eventsV2.size, 1)
             assertEquals(mockedAdobeAnalyticsDestination.adobeAnalyticsSettings!!.contextValues.size, 2)
         }
+    }
+
+    @Test
+    fun `onActivityCreated() handled correctly`() {
+        val mockedActivity = mockkClass(Activity::class)
+        every { mockedActivity.application } returns mockApplication
+        val mockedBundle= mockkClass(Bundle::class)
+        mockedAdobeAnalyticsDestination.onActivityCreated(mockedActivity, mockedBundle)
+        verify { mockedDefaultAdobeAnalyticsClient.setApplication(mockApplication) }
     }
 
     @Test

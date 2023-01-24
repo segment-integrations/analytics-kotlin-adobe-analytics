@@ -14,6 +14,8 @@ internal interface AdobeAnalyticsClient {
         debugLogging: Boolean = false
     )
 
+    fun setApplication(application: Application?)
+
     fun setVisitorIdentifier(identifier: String?)
 
     fun lifecycleStart(contextData: Map<String, String>?)
@@ -51,6 +53,10 @@ class DefaultAnalyticsClient : AdobeAnalyticsClient{
                 e.printStackTrace()
             }
         }
+    }
+
+    override fun setApplication(application: Application?) {
+        MobileCore.setApplication(application)
     }
 
     override fun setVisitorIdentifier(identifier: String?) {

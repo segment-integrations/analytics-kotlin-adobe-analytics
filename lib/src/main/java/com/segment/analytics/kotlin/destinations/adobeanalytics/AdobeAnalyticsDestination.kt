@@ -3,6 +3,7 @@ package com.segment.analytics.kotlin.destinations.adobeanalytics
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import com.segment.analytics.kotlin.android.plugins.AndroidLifecycle
 import com.segment.analytics.kotlin.core.*
 import com.segment.analytics.kotlin.core.Analytics.Companion.debugLogsEnabled
@@ -126,12 +127,19 @@ class AdobeAnalyticsDestination constructor(
     override fun onActivityResumed(activity: Activity?) {
         super.onActivityResumed(activity)
         adobeAnalyticsClient.lifecycleStart(null)
-
+        analytics.log("MobileCore.lifecycleStart()")
     }
 
     override fun onActivityPaused(activity: Activity?) {
         super.onActivityPaused(activity)
         adobeAnalyticsClient.lifecyclePause()
+        analytics.log("MobileCore.lifecyclePause()")
+    }
+
+    override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+        super.onActivityCreated(activity, savedInstanceState)
+        adobeAnalyticsClient.setApplication(activity!!.application)
+        analytics.log("MobileCore.lifecyclePause()")
     }
 
     private fun getContextData(event: BaseEvent, properties: Properties): Map<String, String> {
