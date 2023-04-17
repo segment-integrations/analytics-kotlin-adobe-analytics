@@ -40,11 +40,11 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
     implementation("com.segment.analytics.kotlin:android:1.10.3")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.8.0")
 
     implementation("androidx.lifecycle:lifecycle-process:2.4.1")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.1")
