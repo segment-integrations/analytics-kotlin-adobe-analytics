@@ -417,7 +417,7 @@ class VideoAnalytics internal constructor(
                     startTime = eventPropertiesMap["start_time"]?.toDouble() ?: 0.0
                 }
                 val mediaObjectMap =
-                    Media.createChapterObject(title, indexPosition, totalLength, startTime)
+                    Media.createChapterObject(title?:"", indexPosition, totalLength, startTime)
                  for (key in metadata.keys) {
                     mediaObjectMap[key!!] = metadata[key]!!
                 }
@@ -443,7 +443,7 @@ class VideoAnalytics internal constructor(
                 if (eventPropertiesMap["livestream"]?.toBoolean() != true) {
                     format = MediaConstants.StreamType.VOD
                 }
-                val mediaObjectMap = Media.createMediaObject(title, contentAssetId, totalLength, format, Media.MediaType.Video)
+                val mediaObjectMap = Media.createMediaObject(title, contentAssetId?:"", totalLength, format, Media.MediaType.Video)
                 for (key in metadata.keys) {
                     mediaObjectMap[key!!] = metadata[key]!!
                 }

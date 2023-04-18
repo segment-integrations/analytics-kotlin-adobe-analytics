@@ -57,15 +57,22 @@ class VideoAnalyticsTests {
         mockedVideoAnalytics.contextDataConfiguration = ContextDataConfiguration("", variables)
         startVideoSession()
 
-        val mediaMap: MutableMap<String, String> = HashMap()
-        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        val mediaMap: MutableMap<String, Any> = HashMap()
         mediaMap[MediaConstants.VideoMetadataKeys.SHOW] = "Program 1"
-        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
         mediaMap[MediaConstants.VideoMetadataKeys.SEASON] = "1"
         mediaMap[MediaConstants.VideoMetadataKeys.FIRST_AIR_DATE] = "2023"
+        mediaMap[MediaConstants.MediaObjectKey.PREROLL_TRACKING_WAITING_TIME] = 250L
+        mediaMap["media.streamtype"] = MediaConstants.StreamType.VOD
+        mediaMap["media.type"] = "video"
+        mediaMap[MediaConstants.MediaObjectKey.RESUMED] = false
         mediaMap[MediaConstants.VideoMetadataKeys.STREAM_FORMAT] = MediaConstants.StreamType.VOD
+        mediaMap["media.id"] = "123"
         mediaMap[MediaConstants.VideoMetadataKeys.EPISODE] = "1"
+        mediaMap["media.length"] = 100.0
         mediaMap[MediaConstants.VideoMetadataKeys.NETWORK] = "Channel 1"
+        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
+        mediaMap["media.name"] = "Video 1"
 
         val contextData: MutableMap<String, String> = HashMap()
         contextData["adobe.random"] = "something random"
@@ -138,17 +145,21 @@ class VideoAnalyticsTests {
         val contextData: MutableMap<String, String> = java.util.HashMap()
         contextData["adobe.title"] = "Video 1"
 
-        val mediaMap: MutableMap<String, String> = java.util.HashMap()
-        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        val mediaMap: MutableMap<String, Any> = java.util.HashMap()
         mediaMap[MediaConstants.VideoMetadataKeys.SHOW] = "Program 1"
-        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
         mediaMap[MediaConstants.VideoMetadataKeys.SEASON] = "1"
         mediaMap[MediaConstants.VideoMetadataKeys.FIRST_AIR_DATE] = "2023"
         mediaMap[MediaConstants.VideoMetadataKeys.STREAM_FORMAT] = MediaConstants.StreamType.VOD
         mediaMap[MediaConstants.VideoMetadataKeys.ORIGINATOR] = "Publisher 1"
         mediaMap[MediaConstants.VideoMetadataKeys.EPISODE] = "1"
+        mediaMap["chapter.name"] = "Video 1"
         mediaMap[MediaConstants.VideoMetadataKeys.RATING] = "MA"
+        mediaMap["chapter.starttime"] = 10.0
         mediaMap[MediaConstants.VideoMetadataKeys.NETWORK] = "Channel 1"
+        mediaMap["chapter.length"] = 100.0
+        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
+        mediaMap["chapter.position"] = 1L
         verify {  mockedMediaTracker.updateCurrentPlayhead(35.0)}
         verify {  mockedMediaTracker.trackPlay()}
         verify {  mockedMediaTracker.trackEvent(
@@ -193,17 +204,21 @@ class VideoAnalyticsTests {
         val contextData: MutableMap<String, String> = java.util.HashMap()
         contextData["adobe.title"] = "Video 1"
 
-        val mediaMap: MutableMap<String, String> = java.util.HashMap()
-        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        val mediaMap: MutableMap<String, Any> = java.util.HashMap()
         mediaMap[MediaConstants.VideoMetadataKeys.SHOW] = "Program 1"
-        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
         mediaMap[MediaConstants.VideoMetadataKeys.SEASON] = "1"
         mediaMap[MediaConstants.VideoMetadataKeys.FIRST_AIR_DATE] = "2023"
         mediaMap[MediaConstants.VideoMetadataKeys.STREAM_FORMAT] = MediaConstants.StreamType.VOD
         mediaMap[MediaConstants.VideoMetadataKeys.ORIGINATOR] = "Publisher 1"
         mediaMap[MediaConstants.VideoMetadataKeys.EPISODE] = "1"
+        mediaMap["chapter.name"] = "Video 1"
         mediaMap[MediaConstants.VideoMetadataKeys.RATING] = "MA"
+        mediaMap["chapter.starttime"] = 10.0
         mediaMap[MediaConstants.VideoMetadataKeys.NETWORK] = "Channel 1"
+        mediaMap["chapter.length"] = 100.0
+        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
+        mediaMap["chapter.position"] = 1L
         verify {  mockedMediaTracker.updateCurrentPlayhead(35.0)}
         verify {  mockedMediaTracker.trackPlay()}
         verify {  mockedMediaTracker.trackEvent(
@@ -255,17 +270,21 @@ class VideoAnalyticsTests {
         contextData["extra"] = "extra value"
         contextData["adobe.context1"] = "Context 1 Value"
 
-        val mediaMap: MutableMap<String, String> = java.util.HashMap()
-        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        val mediaMap: MutableMap<String, Any> = java.util.HashMap()
         mediaMap[MediaConstants.VideoMetadataKeys.SHOW] = "Program 1"
-        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
         mediaMap[MediaConstants.VideoMetadataKeys.SEASON] = "1"
         mediaMap[MediaConstants.VideoMetadataKeys.FIRST_AIR_DATE] = "2023"
         mediaMap[MediaConstants.VideoMetadataKeys.STREAM_FORMAT] = MediaConstants.StreamType.VOD
         mediaMap[MediaConstants.VideoMetadataKeys.ORIGINATOR] = "Publisher 1"
         mediaMap[MediaConstants.VideoMetadataKeys.EPISODE] = "1"
+        mediaMap["chapter.name"] = "Video 1"
         mediaMap[MediaConstants.VideoMetadataKeys.RATING] = "MA"
+        mediaMap["chapter.starttime"] = 10.0
         mediaMap[MediaConstants.VideoMetadataKeys.NETWORK] = "Channel 1"
+        mediaMap["chapter.length"] = 100.0
+        mediaMap[MediaConstants.VideoMetadataKeys.ASSET_ID] = "123"
+        mediaMap[MediaConstants.VideoMetadataKeys.GENRE] = "Fiction"
+        mediaMap["chapter.position"] = 1L
         verify {  mockedMediaTracker.updateCurrentPlayhead(35.0)}
         verify {  mockedMediaTracker.trackPlay()}
         verify {  mockedMediaTracker.trackEvent(
@@ -469,8 +488,13 @@ class VideoAnalyticsTests {
         contextData["adobe.title"] = "Video Ad 1"
         contextData["myapp.extra"] = "extra value"
 
-        val mediaMap: MutableMap<String, String> = java.util.HashMap()
+        val mediaMap: MutableMap<String, Any> = java.util.HashMap()
+        mediaMap["ad.length"] = 10.0
+        mediaMap["ad.position"] = 1L
         mediaMap[ADVERTISER] = "Publisher 1"
+        mediaMap["ad.id"] = "123"
+        mediaMap["ad.name"] = "Video Ad 1"
+
         verify {  mockedMediaTracker.trackEvent(Media.Event.AdStart,
             mediaMap as Map<String, Any>?, contextData)}
     }
@@ -503,8 +527,12 @@ class VideoAnalyticsTests {
         contextData["adobe.title"] = "Video Ad 1"
         contextData["myapp.extra"] = "extra value"
 
-        val mediaMap: MutableMap<String, String> = java.util.HashMap()
+        val mediaMap: MutableMap<String, Any> = java.util.HashMap()
+        mediaMap["ad.length"] = 10.0
+        mediaMap["ad.position"] = 1L
         mediaMap[ADVERTISER] = "Publisher 1"
+        mediaMap["ad.id"] = "123"
+        mediaMap["ad.name"] = "Video Ad 1"
         verify {  mockedMediaTracker.trackEvent(Media.Event.AdStart,
             mediaMap as Map<String, Any>?, contextData)}
     }

@@ -9,13 +9,13 @@ plugins {
 val VERSION_NAME: String by project
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.1"
 
     defaultConfig {
         multiDexEnabled = true
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 33
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("proguard-consumer-rules.pro")
@@ -40,11 +40,11 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
-    implementation("com.segment.analytics.kotlin:android:1.5.0")
+    implementation("com.segment.analytics.kotlin:android:1.10.3")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.8.0")
 
     implementation("androidx.lifecycle:lifecycle-process:2.4.1")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.1")
@@ -52,21 +52,21 @@ dependencies {
 
 // Partner Dependencies
 dependencies {
-    implementation("com.adobe.marketing.mobile:core:1.11.4")
-    implementation("com.adobe.marketing.mobile:analytics:1.2.10")
-    implementation("com.adobe.marketing.mobile:media:2.1.2")
-    implementation("com.adobe.marketing.mobile:identity:1.3.2")
+    implementation("com.adobe.marketing.mobile:core:2.1.1")
+    implementation("com.adobe.marketing.mobile:analytics:2.0.2")
+    implementation("com.adobe.marketing.mobile:media:3.0.0")
+    implementation("com.adobe.marketing.mobile:identity:2.0.2")
 }
 
 // Test Dependencies
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     testImplementation("io.mockk:mockk:1.12.4")
 
     // Add Roboelectric dependencies.
     testImplementation("org.robolectric:robolectric:4.7.3")
-    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("androidx.test:core:1.5.0")
 
     // Add JUnit4 legacy dependencies.
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")

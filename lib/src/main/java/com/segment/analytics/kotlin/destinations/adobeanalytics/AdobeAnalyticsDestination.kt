@@ -31,7 +31,7 @@ class AdobeAnalyticsDestination constructor(
         this.adobeAnalyticsSettings =
             settings.destinationSettings(key, AdobeAnalyticsSettings.serializer())
         if (type == Plugin.UpdateType.Initial) {
-            adobeAnalyticsClient.initAdobeMobileCore(adobeAppID,analytics.configuration.application as Application?,
+            adobeAnalyticsClient.initAdobeMobileCore(adobeAppID,analytics.configuration.application as Application,
                 debugLogsEnabled)
             contextDataConfiguration = ContextDataConfiguration(
                 adobeAnalyticsSettings?.customDataPrefix,

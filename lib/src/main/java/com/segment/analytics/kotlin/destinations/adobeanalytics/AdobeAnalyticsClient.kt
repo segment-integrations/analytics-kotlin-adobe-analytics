@@ -10,11 +10,11 @@ import com.adobe.marketing.mobile.MobileCore
 internal interface AdobeAnalyticsClient {
     fun initAdobeMobileCore(
         adobeAppId: String,
-        application: Application?,
+        application: Application,
         debugLogging: Boolean = false
     )
 
-    fun setApplication(application: Application?)
+    fun setApplication(application: Application)
 
     fun setVisitorIdentifier(identifier: String?)
 
@@ -36,26 +36,21 @@ internal interface AdobeAnalyticsClient {
 class DefaultAnalyticsClient : AdobeAnalyticsClient{
     override fun initAdobeMobileCore(
         adobeAppId: String,
-        application: Application?,
+        application: Application,
         debugLogging: Boolean
     ) {
         MobileCore.setApplication(application)
-        Media.registerExtension()
-        Analytics.registerExtension()
-        Identity.registerExtension()
+        MobileCore.configureWithAppID(adobeAppId)
+        val extensions = listOf(Media.EXTENSION, Analytics.EXTENSION, Identity.EXTENSION)
+        MobileCore.registerExtensions(extensions) {
+//            AEP Mobile SDK is initialized
+        }
         if (debugLogging) {
             MobileCore.setLogLevel(LoggingMode.DEBUG)
         }
-        try {
-            MobileCore.start { MobileCore.configureWithAppID(adobeAppId) }
-        } catch (e: Exception) {
-            if (debugLogging) {
-                e.printStackTrace()
-            }
-        }
     }
 
-    override fun setApplication(application: Application?) {
+    override fun setApplication(application: Application) {
         MobileCore.setApplication(application)
     }
 
