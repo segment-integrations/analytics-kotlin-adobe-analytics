@@ -1,4 +1,4 @@
-rootProject.name = "analytics-kotlin-integration-adobe-analytics"
+rootProject.name = "analytics-kotlin-adobe-analytics"
 include(":lib")
 includeBuild("publishing-plugins")
 include(":testapp")
