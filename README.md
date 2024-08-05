@@ -2,6 +2,10 @@
 
 Add Adobe-Analytics support to your applications via this plugin for [Analytics-Kotlin](https://github.com/segmentio/analytics-kotlin)
 
+⚠️ **Github Issues disabled in this repository** ⚠️
+
+Please direct all issues, bug reports, and feature enhancements to `friends@segment.com` so they can be resolved as efficiently as possible. 
+
 ## Adding the dependency
 To install the Segment-Adobe-Analytics integration, simply add this line to your gradle file:
 
